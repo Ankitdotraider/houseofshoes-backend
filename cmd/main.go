@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/Ankitdotraider/houseofshoes/internal/db"
@@ -13,10 +14,16 @@ import (
 
 func main() {
 	godotenv.Load()
-
 	db.Init()
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "https://houseofshoes.vercel.app"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}))
 
 	// Public routes
 	r.POST("/signup", handlers.Signup)
@@ -26,14 +33,14 @@ func main() {
 
 	// Protected routes
 	auth := r.Group("/")
-	auth.Use(middleware.AuthMiddleware())
 	{
-		// Admin
-		auth.POST("/admin/products", handlers.CreateProduct)
-		auth.PUT("/admin/products/:id", handlers.UpdateProduct)
-		auth.DELETE("/admin/products/:id", handlers.DeleteProduct)
-
-		// Orders
+		auth.Use(middleware.AuthMiddleware())
+		admin := auth.Group("/admin")
+		{
+			admin.POST("/products", handlers.CreateProduct)
+			admin.PUT("/products/:id", handlers.UpdateProduct)
+			admin.DELETE("/products/:id", handlers.DeleteProduct)
+		}
 		auth.POST("/orders", handlers.CreateOrder)
 		auth.GET("/orders", handlers.GetOrders)
 	}
