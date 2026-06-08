@@ -16,6 +16,7 @@ type Product struct {
 	Brand       string    `json:"brand"`
 	Category    string    `json:"category"` // kids, mens, womens, chappal
 	Description string    `json:"description"`
+	Price       float64   `json:"price"`
 	ImageURL    string    `json:"image_url"`
 	CreatedAt   time.Time `json:"created_at"`
 }
