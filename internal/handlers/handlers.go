@@ -84,7 +84,7 @@ func GetProducts(c *gin.Context) {
 	category := c.Query("category")
 	brand := c.Query("brand")
 
-	query := `SELECT id, name, brand, category, description, image_url FROM products WHERE 1=1`
+	query := `SELECT id, name, brand, category, description, price, image_url FROM products WHERE 1=1`
 	args := []interface{}{}
 	i := 1
 
@@ -109,7 +109,7 @@ func GetProducts(c *gin.Context) {
 	products := []models.Product{}
 	for rows.Next() {
 		var p models.Product
-		rows.Scan(&p.ID, &p.Name, &p.Brand, &p.Category, &p.Description, &p.ImageURL)
+		rows.Scan(&p.ID, &p.Name, &p.Brand, &p.Category, &p.Description, &p.Price, &p.ImageURL)
 		products = append(products, p)
 	}
 
@@ -161,7 +161,7 @@ func CreateProduct(c *gin.Context) {
 	var id int
 	err := db.DB.QueryRow(
 		`INSERT INTO products (name, brand, category, description, image_url) VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-		p.Name, p.Brand, p.Category, p.Description, p.ImageURL,
+		p.Name, p.Brand, p.Category, p.Description, p.Price, p.ImageURL,
 	).Scan(&id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
