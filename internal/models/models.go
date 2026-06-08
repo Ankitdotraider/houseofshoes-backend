@@ -14,10 +14,12 @@ type Product struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	Brand       string    `json:"brand"`
-	Category    string    `json:"category"` // kids, mens, womens, chappal
+	Category    string    `json:"category"`
+	Gender      string    `json:"gender"`
+	Occasion    string    `json:"occasion"`
 	Description string    `json:"description"`
-	Price       float64   `json:"price"`
 	ImageURL    string    `json:"image_url"`
+	Price       float64   `json:"price"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
