@@ -160,9 +160,9 @@ func CreateProduct(c *gin.Context) {
 
 	var id int
 	err := db.DB.QueryRow(
-		`INSERT INTO products (name, brand, category, description, image_url) VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-		p.Name, p.Brand, p.Category, p.Description, p.Price, p.ImageURL,
-	).Scan(&id)
+    `INSERT INTO products (name, brand, category, description, image_url, price) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
+    p.Name, p.Brand, p.Category, p.Description, p.ImageURL, p.Price,
+).Scan(&id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
