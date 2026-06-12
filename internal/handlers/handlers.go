@@ -84,7 +84,7 @@ func GetProducts(c *gin.Context) {
 	category := c.Query("category")
 	brand := c.Query("brand")
 
-	query := `SELECT id, name, brand, category, gender, occasion, description, price, image_url FROM products WHERE 1=1`
+	query := `SELECT id, name, brand, category, gender, occasion, description, image_url, price FROM products WHERE id=$1`
 	args := []interface{}{}
 	i := 1
 
@@ -122,7 +122,7 @@ func GetProduct(c *gin.Context) {
 	var p models.Product
 	err := db.DB.QueryRow(
 		`SELECT id, name, brand, category, description, image_url FROM products WHERE id=$1`, id,
-	).Scan(&p.ID, &p.Name, &p.Brand, &p.Category, &p.Description, &p.ImageURL)
+	).Scan(&p.ID, &p.Name, &p.Brand, &p.Category, &p.Gender, &p.Occasion, &p.Description, &p.ImageURL, &p.Price)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
 		return
