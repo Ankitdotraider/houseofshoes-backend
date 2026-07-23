@@ -30,19 +30,34 @@ func main() {
 	r.POST("/login", handlers.Login)
 	r.GET("/products", handlers.GetProducts)
 	r.GET("/products/:id", handlers.GetProduct)
+	r.GET("/products/:id/variants", handlers.GetVariants)
 
-	// Protected routes
+	// Protected routes (require auth token)
 	auth := r.Group("/")
 	{
 		auth.Use(middleware.AuthMiddleware())
+
+		// Customer routes
+		auth.POST("/orders", handlers.CreateOrder)
+		auth.GET("/orders", handlers.GetOrders)
+		auth.POST("/payments/verify", handlers.VerifyPayment)
+
+		// Admin routes (auth + admin role check inside handlers)
 		admin := auth.Group("/admin")
 		{
 			admin.POST("/products", handlers.CreateProduct)
 			admin.PUT("/products/:id", handlers.UpdateProduct)
 			admin.DELETE("/products/:id", handlers.DeleteProduct)
+
+			// Variant management
+			admin.POST("/products/:id/variants", handlers.CreateVariant)
+			admin.PUT("/products/:id/variants/:variantId", handlers.UpdateVariant)
+			admin.DELETE("/products/:id/variants/:variantId", handlers.DeleteVariant)
+
+			// Order management
+			admin.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
+			admin.GET("/orders/:id/shipment", handlers.GetShipmentStatus)
 		}
-		auth.POST("/orders", handlers.CreateOrder)
-		auth.GET("/orders", handlers.GetOrders)
 	}
 
 	port := os.Getenv("PORT")
